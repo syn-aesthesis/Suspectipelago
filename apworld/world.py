@@ -7,7 +7,7 @@ from . import items, locations, regions, rules, scenario, web_world
 # from . import options as suspectipelago_options
 class SuspectipelagoWorld(World):
     """
-    Suspectipelago is a minimal murder mystery game inspired by the Cluedo franchise.
+    Suspectipelago is a murder mystery game inspired by the Cluedo franchise.
     Question witnesses, make speculations, and solve the case!
     """
 
