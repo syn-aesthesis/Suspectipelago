@@ -27,7 +27,7 @@ def create_regular_locations(world: SuspectipelagoWorld) -> None:
             SuspectipelagoLocation
         )
 
-def create_events(world: SuspectipelagoLocation) -> None:
+def create_events(world: SuspectipelagoWorld) -> None:
     start_region = world.get_region(world.origin_region_name)
     start_region.add_event("Goal Condition", "Goal",
                           location_type=SuspectipelagoLocation,
