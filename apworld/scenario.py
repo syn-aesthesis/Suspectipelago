@@ -11,13 +11,13 @@ from .data import SUSPECTS, ROOMS, WEAPONS, LOCATIONS, SCENE_REGIONS, SCENE_CONN
 class Scenario:
     crime: tuple[str, str, str]
     intel: list[str]
-    suspect_locations: list[tuple[str, str]]
-    intel_locations: list[tuple[str, str]]
+    suspect_placements: list[tuple[str, str]]
+    intel_placements: list[tuple[str, str]]
 
     @property
     def region_connections(self) -> list[tuple[str, str]]:
         return (SCENE_CONNECTIONS + self.
-                suspect_locations)
+                suspect_placements)
 
 def generate_scenario(world: SuspectipelagoWorld) -> Scenario:
     crime = (
@@ -35,11 +35,11 @@ def generate_scenario(world: SuspectipelagoWorld) -> Scenario:
 
     suspects = list(SUSPECTS)
     world.random.shuffle(suspects)
-    suspect_locations = [
+    suspect_placements = [
         (SCENE_REGIONS[1 + n], suspects[n]) for n in range(len(suspects))
     ]
-    intel_locations = [
+    intel_placements = [
         (LOCATIONS[30001 + n], intel[n]) for n in range(len(intel))
     ]
 
-    return Scenario(crime, intel, suspect_locations, intel_locations)
+    return Scenario(crime, intel, suspect_placements, intel_placements)

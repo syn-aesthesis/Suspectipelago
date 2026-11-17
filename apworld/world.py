@@ -46,7 +46,7 @@ class SuspectipelagoWorld(World):
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data = {
             "crime": list(self.scenario.crime),
-            "suspect_locations": dict(self.scenario.suspect_locations),
-            "intel_locations": dict(self.scenario.intel_locations)
+            "suspect_placements": dict(self.scenario.suspect_placements),
+            "intel_placements": dict(self.scenario.intel_placements)
         }
         return slot_data

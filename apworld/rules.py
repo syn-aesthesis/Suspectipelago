@@ -23,7 +23,7 @@ def set_all_entrance_rules(world: SuspectipelagoWorld) -> None:
 
 def set_all_location_rules(world: SuspectipelagoWorld) -> None:
     # set location rules for intel
-    for location, intel in world.scenario.intel_locations:
+    for location, intel in world.scenario.intel_placements:
         world.set_rule(
             world.get_location(location),
             And(
