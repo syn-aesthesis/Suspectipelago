@@ -6,7 +6,8 @@ from rule_builder.rules import (
 if TYPE_CHECKING:
     from .world import SuspectipelagoWorld
 
-from .data import ENTRANCE_KEYS, ITEMS, INTEL_ITEMS, SUSPECT_REGIONS
+from .data import (ENTRANCE_KEYS, CLUE_ITEMS, PROFILE_ITEMS, KEY_ITEMS,
+                   REPORT_ITEMS, SUSPECT_REGIONS)
 
 def set_all_rules(world: SuspectipelagoWorld) -> None:
     set_all_entrance_rules(world)
@@ -23,14 +24,14 @@ def set_all_entrance_rules(world: SuspectipelagoWorld) -> None:
 
 def set_all_location_rules(world: SuspectipelagoWorld) -> None:
     # set location rules for intel
-    for location, intel in world.scenario.intel_placements:
+    for location, clue in world.scenario.intel_placements:
         world.set_rule(
             world.get_location(location),
             And(
-                AtLeast(1, *[Has(item) for item in ITEMS.values() if "Suspect Profile" in item]),
-                AtLeast(1, *[Has(item) for item in ITEMS.values() if "Room Key" in item]),
-                AtLeast(1, *[Has(item) for item in ITEMS.values() if "Weapon Report" in item]),
-                Has(INTEL_ITEMS[intel])
+                AtLeast(1, *[Has(i) for i in PROFILE_ITEMS]),
+                AtLeast(1, *[Has(i) for i in KEY_ITEMS]),
+                AtLeast(1, *[Has(i) for i in REPORT_ITEMS]),
+                Has(CLUE_ITEMS[clue])
             )
         )
 
@@ -38,8 +39,8 @@ def set_all_location_rules(world: SuspectipelagoWorld) -> None:
     world.set_rule(
         world.get_location("Goal Condition"),
         And(
-            *[Has(INTEL_ITEMS[c]) for c in world.scenario.crime],
-            *[CanReachRegion(suspect) for suspect in SUSPECT_REGIONS]
+            *[Has(CLUE_ITEMS[c]) for c in world.scenario.crime],
+            *[CanReachRegion(s) for s in SUSPECT_REGIONS]
         )
     )
 

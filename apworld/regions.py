@@ -5,7 +5,7 @@ from BaseClasses import Entrance, Region
 if TYPE_CHECKING:
     from .world import SuspectipelagoWorld
 
-from .data import REGIONS
+from .data import REGIONS, entrance_name
 
 def create_and_connect_regions(world: SuspectipelagoWorld) -> None:
     create_all_regions(world)
@@ -25,4 +25,4 @@ def connect_regions(world: SuspectipelagoWorld) -> None:
 
     # define Entrance connections between regions
     for src, dst in world.scenario.region_connections:
-        regions[src].connect(regions[dst], f"{src} to {dst}")
+        regions[src].connect(regions[dst], entrance_name(src, dst))

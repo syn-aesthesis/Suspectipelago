@@ -1,3 +1,4 @@
+# --- Core lists ---
 SUSPECTS =  [
     "Alice",
     "Bob",
@@ -20,90 +21,68 @@ WEAPONS = [
     "Candlestick"
 ]
 
-SCENE_REGIONS = ["Entrance", "Foyer"] + ROOMS
-SUSPECT_REGIONS = SUSPECTS
+ENTRANCE = "Entrance"
+FOYER = "Foyer"
+INTERIOR = [FOYER, *ROOMS]
+INTEL_SLOTS = (1, 2)
+
+# --- Name helpers ---
+def entrance_name(src, dst):    return f"{src} to {dst}"
+def enter_location(place):      return f"Enter {place}"
+def question_location(s):       return f"Question {s}"
+def intel_location(s, slot):    return f"Receive intel ({s} {slot})"
+
+# --- Regions ---
+SCENE_REGIONS = [ENTRANCE, *INTERIOR]
+SUSPECT_REGIONS = list(SUSPECTS)
 REGIONS = SCENE_REGIONS + SUSPECT_REGIONS
+SCENE_CONNECTIONS = [(ENTRANCE, FOYER)] + [(FOYER, r) for r in ROOMS]
 
-SCENE_CONNECTIONS = [
-    ("Entrance", "Foyer"),
-    ("Foyer", "Living Room"),
-    ("Foyer", "Dining Room"),
-    ("Foyer", "Kitchen"),
-    ("Foyer", "Study"),
-    ("Foyer", "Bedroom")
-]
-
+# --- Items ---
+CLUE_ITEMS = (
+    {s: f"Suspect Profile: {s}" for s in SUSPECTS}
+    | {r: f"Room Key: {r}" for r in ROOMS}
+    | {w: f"Weapon Report: {w}" for w in WEAPONS}
+)
 ITEMS = {
-    1001: "Suspect Profile: Alice",
-    1002: "Suspect Profile: Bob",
-    1003: "Suspect Profile: Carol",
-    1004: "Suspect Profile: David",
-    1005: "Suspect Profile: Eve",
-    1006: "Suspect Profile: Frank",
-    2001: "Room Key: Living Room",
-    2002: "Room Key: Dining Room",
-    2003: "Room Key: Kitchen",
-    2004: "Room Key: Study",
-    2005: "Room Key: Bedroom",
-    3001: "Weapon Report: Knife",
-    3002: "Weapon Report: Pistol",
-    3003: "Weapon Report: Rope",
-    3004: "Weapon Report: Candlestick",
+    **{1001 + i: CLUE_ITEMS[s] for i, s in enumerate(SUSPECTS)},
+    **{2001 + i: CLUE_ITEMS[r] for i, r in enumerate(ROOMS)},
+    **{3001 + i: CLUE_ITEMS[w] for i, w in enumerate(WEAPONS)},
 }
-FILLER = {
-    101: "Filler"
-}
+FILLER = {101: "Filler"}
 ITEM_NAME_TO_ID = {name: i for i, name in (ITEMS | FILLER).items()}
 
+PROFILE_ITEMS   = [CLUE_ITEMS[s] for s in SUSPECTS]
+KEY_ITEMS       = [CLUE_ITEMS[r] for r in ROOMS]
+REPORT_ITEMS    = [CLUE_ITEMS[w] for w in WEAPONS]
+ENTRANCE_KEYS   = {entrance_name(FOYER, r): CLUE_ITEMS[r] for r in ROOMS}
+
+# --- Locations ---
+ENTER_LOCATIONS     = [enter_location(p) for p in INTERIOR]
+QUESTION_LOCATIONS  = [question_location(s) for s in SUSPECTS]
+INTEL_LOCATIONS     = [intel_location(s, n) for s in SUSPECTS for n in INTEL_SLOTS]
+
 LOCATIONS = {
-    10001: "Enter Foyer",
-    10002: "Enter Living Room",
-    10003: "Enter Dining Room",
-    10004: "Enter Kitchen",
-    10005: "Enter Study",
-    10006: "Enter Bedroom",
-    20001: "Question Alice",
-    20002: "Question Bob",
-    20003: "Question Carol",
-    20004: "Question David",
-    20005: "Question Eve",
-    20006: "Question Frank",
-    30001: "Receive intel (Alice 1)",
-    30002: "Receive intel (Alice 2)",
-    30003: "Receive intel (Bob 1)",
-    30004: "Receive intel (Bob 2)",
-    30005: "Receive intel (Carol 1)",
-    30006: "Receive intel (Carol 2)",
-    30007: "Receive intel (David 1)",
-    30008: "Receive intel (David 2)",
-    30009: "Receive intel (Eve 1)",
-    30010: "Receive intel (Eve 2)",
-    30011: "Receive intel (Frank 1)",
-    30012: "Receive intel (Frank 2)",
+    **{10001 + i: name for i, name in enumerate(ENTER_LOCATIONS)},
+    **{20001 + i: name for i, name in enumerate(QUESTION_LOCATIONS)},
+    **{30001 + i: name for i, name in enumerate(INTEL_LOCATIONS)},
 }
 LOCATION_NAME_TO_ID = {name: i for i, name in LOCATIONS.items()}
 
 REGION_LOCATIONS = {
-    "Foyer":        ["Enter Foyer"],
-    "Living Room":  ["Enter Living Room"],
-    "Dining Room":  ["Enter Dining Room"],
-    "Kitchen":      ["Enter Kitchen"],
-    "Study":        ["Enter Study"],
-    "Bedroom":      ["Enter Bedroom"],
-    "Alice":    ["Question Alice", "Receive intel (Alice 1)", "Receive intel (Alice 2)"],
-    "Bob":      ["Question Bob", "Receive intel (Bob 1)", "Receive intel (Bob 2)"],
-    "Carol":    ["Question Carol", "Receive intel (Carol 1)", "Receive intel (Carol 2)"],
-    "David":    ["Question David", "Receive intel (David 1)", "Receive intel (David 2)"],
-    "Eve":      ["Question Eve", "Receive intel (Eve 1)", "Receive intel (Eve 2)"],
-    "Frank":    ["Question Frank", "Receive intel (Frank 1)", "Receive intel (Frank 2)"],
+    **{p: [enter_location(p)] for p in INTERIOR},
+    **{s: [question_location(s), *[intel_location
+                                   (s, n) for n in INTEL_SLOTS]] for s in SUSPECTS},
 }
 
-ENTRANCE_KEYS = {
-    "Foyer to Living Room": "Room Key: Living Room",
-    "Foyer to Dining Room": "Room Key: Dining Room",
-    "Foyer to Kitchen":     "Room Key: Kitchen",
-    "Foyer to Study":       "Room Key: Study",
-    "Foyer to Bedroom":     "Room Key: Bedroom",
-}
+# --- Invariants ---
 
-INTEL_ITEMS = dict(zip(SUSPECTS + ROOMS + WEAPONS, ITEMS.values()))
+assert len(CLUE_ITEMS) == len(SUSPECTS) + len(ROOMS) + len(WEAPONS), \
+    "suspect, room, and weapon names must be unique across all three lists"
+assert len(INTEL_LOCATIONS) == len(CLUE_ITEMS) - 3, \
+    "intel pieces must equal the wrong clues: every clue except the 3 in the crime"
+assert len(INTERIOR) == len(SUSPECTS), \
+    "scenario.py places exactly one suspect per place"
+assert len(ITEM_NAME_TO_ID) == len(ITEMS) + len(FILLER)
+assert len(LOCATION_NAME_TO_ID) == len(LOCATIONS)
+

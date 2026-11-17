@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .world import SuspectipelagoWorld
 
-from .data import SUSPECTS, ROOMS, WEAPONS, LOCATIONS, SCENE_REGIONS, SCENE_CONNECTIONS
+from .data import SUSPECTS, ROOMS, WEAPONS, INTERIOR, INTEL_LOCATIONS, SCENE_CONNECTIONS
 
 @dataclass
 class Scenario:
@@ -35,11 +35,8 @@ def generate_scenario(world: SuspectipelagoWorld) -> Scenario:
 
     suspects = list(SUSPECTS)
     world.random.shuffle(suspects)
-    suspect_placements = [
-        (SCENE_REGIONS[1 + n], suspects[n]) for n in range(len(suspects))
-    ]
-    intel_placements = [
-        (LOCATIONS[30001 + n], intel[n]) for n in range(len(intel))
-    ]
+
+    suspect_placements = list(zip(INTERIOR, suspects))
+    intel_placements = list(zip(INTEL_LOCATIONS, intel))
 
     return Scenario(crime, intel, suspect_placements, intel_placements)
