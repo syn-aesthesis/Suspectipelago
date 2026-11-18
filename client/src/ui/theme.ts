@@ -18,9 +18,15 @@ export const COLOR = {
 export const css = (color: number): string => '#' + color.toString(16).padStart(6, '0');
 
 export const FONT_FAMILY = '"Courier New", Courier, monospace';
+export const TEXT_PAD_BOTTOM = 3;
 
 export function textStyle(color: number = COLOR.text, fontSize = 14) {
-    return { fontFamily: FONT_FAMILY, fontSize: `${fontSize}px`, color: css(color) };
+    return { 
+        fontFamily: FONT_FAMILY, 
+        fontSize: `${fontSize}px`, 
+        color: css(color),
+        padding: { bottom: TEXT_PAD_BOTTOM },
+    };
 }
 
 /** Screen regions, in game pixels */

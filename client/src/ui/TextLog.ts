@@ -1,6 +1,6 @@
 import type * as Phaser from 'phaser';
 import { wrapText } from '../core/wrap.ts';
-import { textStyle } from './theme.ts';
+import { TEXT_PAD_BOTTOM, textStyle } from './theme.ts';
 
 const TICK_MS = 12;
 const CHARS_PER_TICK = 3;
@@ -15,11 +15,11 @@ export class TextLog {
         // Measure the monospace font once: 40 Ms, then divide.
         const probe = scene.add.text(0, 0, 'M'.repeat(40), textStyle());
         const charWidth = probe.width / 40;
-        const lineHeight = probe.height;
+        const lineHeight = probe.style.getTextMetrics().fontSize;
         probe.destroy();
 
         this.cols = Math.max(10, Math.floor(width / charWidth) - 1);
-        this.maxLines = Math.max(1, Math.floor(height / lineHeight));
+        this.maxLines = Math.max(1, Math.floor((height - TEXT_PAD_BOTTOM) / lineHeight));
         this.text = scene.add.text(x, y, '', textStyle());
     }
 
