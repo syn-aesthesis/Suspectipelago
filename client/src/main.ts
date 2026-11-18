@@ -1,15 +1,15 @@
-// import { greet } from './greet.ts';
-// document.querySelector('#game')!.textContent = greet('browser');
-
 import * as Phaser from 'phaser';
-import { TextLog } from './ui/TextLog';
+import { TextLog } from './ui/TextLog.ts';
+import { Menu } from './ui/Menu.ts'
 
 class HelloScene extends Phaser.Scene {
     constructor() { super('Hello'); }
     create(): void {
-        // this.add.text(320, 200, 'Hello, world', { fontFamily: 'monospace', fontSize: '24px' }).setOrigin(0.5);
         const log = new TextLog(this, 10, 32, 620, 228);
-        log.push(['Hello', 'a much longer line'.repeat(8)]);
+        log.push(['Hello', 'a much longer line '.repeat(8)]);
+        
+        const m = new Menu(this, 4, 266, 632, 130);
+        m.show('Test', Array.from({ length: 7 }, (_, i) => ({ label: `Row ${i}`, action: () => console.log(i) })));
     }
 }
 
