@@ -40,7 +40,7 @@ export class Menu {
         const columnWidth = (this.width - 18) / Math.max(1, columns);
         items.forEach((item, i) => {
             const enabled = item.enabled !== false;
-            const suffix = !enabled && item.note ? `(${item.note})` : '';
+            const suffix = !enabled && item.note ? ` (${item.note})` : '';
             const x = this.x + 18 + Math.floor(i / this.rowsPerColumn) * columnWidth;
             const y = this.y + TOP + (i % this.rowsPerColumn) * ROW_HEIGHT;
             const row = this.scene.add.text(x, y, `${i + 1}. ${item.label}${suffix}`, textStyle(enabled ? COLOR.bright : COLOR.dim));
