@@ -42,7 +42,7 @@ export class GameScene extends Phaser.Scene {
                 const result = this.controller.move(dest);
                 this.log.push(result.lines);
                 this.refreshHud();
-                this.mainMenu;
+                this.mainMenu();
             }
         }));
         items.push({ label: 'Back', action: () => this.mainMenu() });
